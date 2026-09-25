@@ -441,7 +441,9 @@ class CDF:
 
         vdr_info = self.vdr_info(variable)
         if vdr_info.max_rec < 0:
-            raise ValueError(f"No records found for variable {variable}")
+            # No records have been written (all records are virtual), so return an empty array
+            dimensions = [size for size, vary in zip(vdr_info.dim_sizes, vdr_info.dim_vary) if vary]
+            return self._read_data(b"", vdr_info.data_type, 0, vdr_info.num_elements, dimensions)
 
         return self._read_vardata(
             vdr_info,
